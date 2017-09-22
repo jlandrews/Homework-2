@@ -44,6 +44,10 @@ contract BettingContract {
 		outcomes = _outcomes;
 	}
 
+	function setOutcomes(uint[] _outcomes) public OwnerOnly {
+		outcomes = _outcomes;
+	}
+
 	/* Owner chooses their trusted Oracle */
 	function chooseOracle(address _oracle) public OwnerOnly() returns (address) {
 		if (bets[_oracle].initialized) revert();
