@@ -5,7 +5,7 @@ contract BettingContract {
 	address owner;
 	address public oracle;
 	uint numBets;
-	uint maxBets = 10;
+	uint maxBets = 5;
 	address[] gamblers = new address[](maxBets);
 	uint totalBet;
 	uint[] outcomes;
@@ -41,10 +41,6 @@ contract BettingContract {
 	/* Constructor function, where owner and outcomes are set */
 	function BettingContract(uint[] _outcomes) public {
 		owner = msg.sender;
-		outcomes = _outcomes;
-	}
-
-	function setOutcomes(uint[] _outcomes) public OwnerOnly {
 		outcomes = _outcomes;
 	}
 
@@ -99,10 +95,9 @@ contract BettingContract {
 	function withdraw(uint withdrawAmount)
 	public
 	HasFunds(withdrawAmount)
-	returns (uint remainingBal) {
+	{
 		winnings[msg.sender] -= withdrawAmount;
 		msg.sender.transfer(withdrawAmount);
-		remainingBal = winnings[msg.sender];
 	}
 
 	/* Allow anyone to check the outcomes they can bet on */
@@ -125,7 +120,9 @@ contract BettingContract {
 	}
 
 	/* Fallback function */
-	function() {
+	function() payable {
+		//If I don't make this payable, the test suite never hits the revert
+		//which causes the coverage calculation to not be 100%...
 		revert();
 	}
 }
